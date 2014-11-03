@@ -1,0 +1,9 @@
+[submodule "deps/TooN"]
+	path = deps/TooN
+	url = git@github.com:edrosten/TooN.git
+[submodule "deps/gvars"]
+	path = deps/gvars
+	url = git@github.com:jonatanolofsson/gvars.git
+[submodule "deps/cvd"]
+	path = deps/cvd
+	url = git@github.com:edrosten/libcvd.git
