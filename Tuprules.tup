@@ -1,0 +1,25 @@
+TOP = $(TUP_CWD)
+
+COMPILER = ccache clang++ -Qunused-arguments
+ifdef USE_GCC
+    COMPILER = g++
+endif
+
+CFLAGS  = -Os
+CFLAGS += -Wall
+CFLAGS += -Werror
+CFLAGS += -Wno-unknown-pragmas
+
+CXXFLAGS  = $(CFLAGS)
+CXXFLAGS += -std=c++0x
+
+INCLUDE_FLAGS  = -I$(TOP)/deps
+INCLUDE_FLAGS += -I$(TOP)/deps/cvd
+INCLUDE_FLAGS += -I$(TOP)/deps/gvars
+INCLUDE_FLAGS += -I$(TOP)/Src
+
+APP_FLAGS  = -I$(TOP)/gui
+
+!cxx = |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) -c %f -o %o |> %B.o $(TOP)/<ptam>
+!cxxapp = |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) $(APP_FLAGS) %f -o %o |> %d
+!ar = |> ar crs %o |> lib%d.a
