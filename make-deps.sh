@@ -4,12 +4,12 @@ cd $DIR/deps
 (
     cd cvd
     export CXXFLAGS=-D_REENTRANT
-    ./configure --without-ffmpeg
+    ./configure --without-ffmpeg CPPFLAGS=-I$DIR/deps
     make
 )
 (
     cd gvars
-    ./configure --disable-widgets
+    ./configure --disable-widgets CPPFLAGS=-I$DIR/deps
     make
 )
 

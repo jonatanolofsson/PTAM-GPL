@@ -1,2 +1,2 @@
 include_rules
-: foreach *.cc |> !cxx |> %B.o $(TOP)/<gui>
+: foreach *.cc |> !cxx |> %B.o

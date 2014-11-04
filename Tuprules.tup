@@ -5,21 +5,28 @@ ifdef USE_GCC
     COMPILER = g++
 endif
 
-CFLAGS  = -Os
+CFLAGS  = -O0
+CFLAGS += -ggdb
 CFLAGS += -Wall
 CFLAGS += -Werror
 CFLAGS += -Wno-unknown-pragmas
 
 CXXFLAGS  = $(CFLAGS)
 CXXFLAGS += -std=c++0x
+CXXFLAGS += -DCVD_HAVE_TOON
 
 INCLUDE_FLAGS  = -I$(TOP)/deps
 INCLUDE_FLAGS += -I$(TOP)/deps/cvd
 INCLUDE_FLAGS += -I$(TOP)/deps/gvars
-INCLUDE_FLAGS += -I$(TOP)/Src
+INCLUDE_FLAGS += -I$(TOP)/src
 
-APP_FLAGS  = -I$(TOP)/gui
+APP_FLAGS  =
+
+APP_LDFLAGS  = -L$(TOP) -lptam
+APP_LDFLAGS += $(TOP)/deps/cvd/libcvd.a
+APP_LDFLAGS += $(TOP)/deps/gvars/liblGVars3.a -lreadline
+APP_LDFLAGS += -lpthread
 
 !cxx = |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) -c %f -o %o |> %B.o $(TOP)/<ptam>
-!cxxapp = |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) $(APP_FLAGS) %f -o %o |> %d
+!cxxapp = | $(TOP)/libptam.a $(TOP)/libptam_gui.a |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) $(APP_FLAGS) %f -o %o $(APP_LDFLAGS) |> %d
 !ar = |> ar crs %o |> lib%d.a

@@ -18,7 +18,7 @@
 #include <cvd/byte.h>
 
 class ATANCamera;
-class Map;
+struct Map;
 class MapMaker;
 class Tracker;
 class ARDriver;
@@ -29,20 +29,20 @@ class System
 public:
   System();
   void Run();
-  
+
 private:
   VideoSource mVideoSource;
   GLWindow2 mGLWindow;
   CVD::Image<CVD::Rgb<CVD::byte> > mimFrameRGB;
   CVD::Image<CVD::byte> mimFrameBW;
-  
-  Map *mpMap; 
-  MapMaker *mpMapMaker; 
-  Tracker *mpTracker; 
+
+  Map *mpMap;
+  MapMaker *mpMapMaker;
+  Tracker *mpTracker;
   ATANCamera *mpCamera;
   ARDriver *mpARDriver;
   MapViewer *mpMapViewer;
-  
+
   bool mbDone;
 
   static void GUICommandCallBack(void* ptr, std::string sCommand, std::string sParams);

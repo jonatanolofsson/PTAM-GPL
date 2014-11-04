@@ -1,4 +1,11 @@
 // Copyright 2008 Isis Innovation Limited
+
+#include "GuiConfig.h"
+
+#ifdef INCLUDE_GUI
+#include "OpenGL.h"
+#include <cvd/gl_helpers.h>
+#endif
 #include "Tracker.h"
 #include "MEstimator.h"
 #include "ShiTomasi.h"
@@ -7,7 +14,6 @@
 #include "TrackerData.h"
 
 #include <cvd/utility.h>
-#include <cvd/gl_helpers.h>
 #include <cvd/fast_corner.h>
 #include <cvd/vision.h>
 #include <TooN/wls.h>
@@ -16,6 +22,7 @@
 
 #include <fstream>
 #include <fcntl.h>
+#include <unistd.h>
 
 
 using namespace CVD;
@@ -32,9 +39,11 @@ Tracker::Tracker(ImageRef irVideoSize, const ATANCamera &c, Map &m, MapMaker &mm
   mirSize(irVideoSize)
 {
   mCurrentKF.bFixed = false;
+#ifdef INCLUDE_GUI
   GUI.RegisterCommand("Reset", GUICommandCallBack, this);
   GUI.RegisterCommand("KeyPress", GUICommandCallBack, this);
   GUI.RegisterCommand("PokeTracker", GUICommandCallBack, this);
+#endif
   TrackerData::irImageSize = mirSize;
 
   mpSBILastFrame = NULL;
@@ -82,9 +91,15 @@ void Tracker::Reset()
 // It figures out what state the tracker is in, and calls appropriate internal tracking
 // functions. bDraw tells the tracker wether it should output any GL graphics
 // or not (it should not draw, for example, when AR stuff is being shown.)
-void Tracker::TrackFrame(Image<byte> &imFrame, bool bDraw)
+void Tracker::TrackFrame(Image<byte> &imFrame
+#ifdef INCLUDE_GUI
+, bool bDraw
+#endif
+)
 {
+#ifdef INCLUDE_GUI
   mbDraw = bDraw;
+#endif
   mMessageForUser.str("");   // Wipe the user message clean
 
   // Take the input video image, and convert it into the tracker's keyframe struct
@@ -111,6 +126,7 @@ void Tracker::TrackFrame(Image<byte> &imFrame, bool bDraw)
   // From now on we only use the keyframe struct!
   mnFrame++;
 
+#ifdef INCLUDE_GUI
   if(mbDraw)
     {
       glDrawPixels(mCurrentKF.aLevels[0].im);
@@ -122,6 +138,7 @@ void Tracker::TrackFrame(Image<byte> &imFrame, bool bDraw)
 	  glEnd();
 	}
     }
+#endif
 
   // Decide what to do - if there is a map, try to track the map ...
   if(mMap.IsGood())
@@ -199,6 +216,7 @@ bool Tracker::AttemptRecovery()
   return true;
 }
 
+#ifdef INCLUDE_GUI
 // Draw the reference grid to give the user an idea of wether tracking is OK or not.
 void Tracker::RenderGrid()
 {
@@ -225,6 +243,7 @@ void Tracker::RenderGrid()
 	  v3Cam[2] = 0.001;
 	imVertices[i][j] = mCamera.Project(project(v3Cam));
       }
+
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -245,6 +264,7 @@ void Tracker::RenderGrid()
   glLineWidth(1);
   glColor3f(1,0,0);
 }
+#endif
 
 // GUI interface. Stuff commands onto the back of a queue so the tracker handles
 // them in its own thread at the end of each frame. Note the charming lack of
@@ -377,6 +397,8 @@ void Tracker::TrailTracking_Start()
 int Tracker::TrailTracking_Advance()
 {
   int nGoodTrails = 0;
+
+#ifdef INCLUDE_GUI
   if(mbDraw)
     {
       glPointSize(5);
@@ -387,6 +409,7 @@ int Tracker::TrailTracking_Advance()
       glEnable(GL_BLEND);
       glBegin(GL_LINES);
     }
+#endif
 
   MiniPatch BackwardsPatch;
   Level &lCurrentFrame = mCurrentKF.aLevels[0];
@@ -412,6 +435,7 @@ int Tracker::TrailTracking_Advance()
 	  trail.irCurrentPos = irEnd;
 	  nGoodTrails++;
 	}
+#ifdef INCLUDE_GUI
       if(mbDraw)
 	{
 	  if(!bFound)
@@ -422,14 +446,17 @@ int Tracker::TrailTracking_Advance()
 	  if(bFound) glColor3f(1,0,0);
 	  glVertex(trail.irCurrentPos);
 	}
+#endif
       if(!bFound) // Erase from list of trails if not found this frame.
 	{
 	  mlTrails.erase(i);
 	}
 	  i = next;
     }
+#ifdef INCLUDE_GUI
   if(mbDraw)
     glEnd();
+#endif
 
   mPreviousFrameKF = mCurrentKF;
   return nGoodTrails;
@@ -679,7 +706,7 @@ void Tracker::TrackMap()
       mse3CamFromWorld = SE3<>::exp(v6Update) * mse3CamFromWorld;
       v6LastUpdate = v6Update;
     };
-
+#ifdef INCLUDE_GUI
   if(mbDraw)
     {
       glPointSize(6);
@@ -699,6 +726,7 @@ void Tracker::TrackMap()
       glEnd();
       glDisable(GL_BLEND);
     }
+#endif
 
   // Update the current keyframe with info on what was found in the frame.
   // Strictly speaking this is unnecessary to do every frame, it'll only be

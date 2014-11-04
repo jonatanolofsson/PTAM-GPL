@@ -4,7 +4,7 @@
 //
 // This header declares the data structures to do with keyframes:
 // structs KeyFrame, Level, Measurement, Candidate.
-// 
+//
 // A KeyFrame contains an image pyramid stored as array of Level;
 // A KeyFrame also has associated map-point mesurements stored as a vector of Measurment;
 // Each individual Level contains an image, corner points, and special corner points
@@ -26,8 +26,8 @@ using namespace TooN;
 #include <set>
 #include <map>
 
-class MapPoint;
-class SmallBlurryImage;
+struct MapPoint;
+struct SmallBlurryImage;
 
 #define LEVELS 4
 
@@ -56,21 +56,21 @@ struct Level
   {
     bImplaneCornersCached = false;
   };
-  
+
   CVD::Image<CVD::byte> im;                // The pyramid level pixels
   std::vector<CVD::ImageRef> vCorners;     // All FAST corners on this level
   std::vector<int> vCornerRowLUT;          // Row-index into the FAST corners, speeds up access
   std::vector<CVD::ImageRef> vMaxCorners;  // The maximal FAST corners
   Level& operator=(const Level &rhs);
-  
+
   std::vector<Candidate> vCandidates;   // Potential locations of new map points
-  
+
   bool bImplaneCornersCached;           // Also keep image-plane (z=1) positions of FAST corners to speed up epipolar search
   std::vector<Vector<2> > vImplaneCorners; // Corner points un-projected into z=1-plane coordinates
 };
 
 // The actual KeyFrame struct. The map contains of a bunch of these. However, the tracker uses this
-// struct as well: every incoming frame is turned into a keyframe before tracking; most of these 
+// struct as well: every incoming frame is turned into a keyframe before tracking; most of these
 // are then simply discarded, but sometimes they're then just added to the map.
 struct KeyFrame
 {
@@ -82,14 +82,14 @@ struct KeyFrame
   bool bFixed;      // Is the coordinate frame of this keyframe fixed? (only true for first KF!)
   Level aLevels[LEVELS];  // Images, corners, etc lives in this array of pyramid levels
   std::map<MapPoint*, Measurement> mMeasurements;           // All the measurements associated with the keyframe
-  
-  void MakeKeyFrame_Lite(CVD::BasicImage<CVD::byte> &im);   // This takes an image and calculates pyramid levels etc to fill the 
+
+  void MakeKeyFrame_Lite(CVD::BasicImage<CVD::byte> &im);   // This takes an image and calculates pyramid levels etc to fill the
                                                             // keyframe data structures with everything that's needed by the tracker..
   void MakeKeyFrame_Rest();                                 // ... while this calculates the rest of the data which the mapmaker needs.
-  
+
   double dSceneDepthMean;      // Hacky hueristics to improve epipolar search.
   double dSceneDepthSigma;
-  
+
   SmallBlurryImage *pSBI; // The relocaliser uses this
 };
 

@@ -1,2 +1,11 @@
-INCLUDE_FLAGS += %(TUP_CWD)
-
+APP_FLAGS += -I$(TOP)/gui
+APP_LDFLAGS += -lptam_gui
+APP_LDFLAGS += -lX11
+APP_LDFLAGS += -ltiff
+APP_LDFLAGS += -ljpeg
+APP_LDFLAGS += -lpng
+APP_LDFLAGS += -llapack
+APP_LDFLAGS += -lGLU
+APP_LDFLAGS += -lGL
+APP_LDFLAGS += -lXext
+INCLUDE_FLAGS += -I$(TUP_CWD)
