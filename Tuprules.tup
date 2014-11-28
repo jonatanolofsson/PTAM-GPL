@@ -1,6 +1,6 @@
 TOP = $(TUP_CWD)
 
-COMPILER = ccache clang++ -Qunused-arguments
+COMPILER = clang++ -Qunused-arguments
 ifdef USE_GCC
     COMPILER = g++
 endif
