@@ -1,4 +1,4 @@
 include_rules
 #SOURCE = VideoSource_@(PTAM_VIDEOSOURCE).cc
 SOURCE = VideoSource_Linux_V4L.cc
-: $(SOURCE) |> !cxx |>
+: $(SOURCE) | $(TOP)/<deps> |> !cxx |>

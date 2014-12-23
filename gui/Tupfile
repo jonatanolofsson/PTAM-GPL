@@ -1,2 +1,2 @@
 include_rules
-: foreach *.cc |> !cxx |> %B.o
+: foreach *.cc | $(TOP)/<deps> |> !cxx |> %B.o

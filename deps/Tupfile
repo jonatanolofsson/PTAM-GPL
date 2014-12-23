@@ -1,2 +1,3 @@
-: cvd/cvd/* cvd/cvd_src/* cvd/cvd_src/Linux/* cvd/cvd_src/MMX/* cvd/cvd_src/NEON/* cvd/cvd_src/OSX/* cvd/cvd_src/SSE2/* cvd/cvd_src/Win32/* |> ^o^ sh make_cvd.sh |> cvd/libcvd.a
-: gvars/gvars3/* gvars/src/* |> ^o^ sh make_gvars.sh |> gvars/libGVars3.a
+include_rules
+: cvd/cvd/* cvd/cvd_src/* cvd/cvd_src/Linux/* cvd/cvd_src/MMX/* cvd/cvd_src/NEON/* cvd/cvd_src/OSX/* cvd/cvd_src/SSE2/* cvd/cvd_src/Win32/* |> ^o^ sh make_cvd.sh |> cvd/libcvd.a cvd/cvd/config.h $(TOP)/<deps>
+: gvars/gvars3/* gvars/src/* |> ^o^ sh make_gvars.sh |> gvars/libGVars3.a gvars/gvars3/config.h $(TOP)/<deps>

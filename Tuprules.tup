@@ -22,11 +22,13 @@ INCLUDE_FLAGS += -I$(TOP)/src
 
 APP_FLAGS  =
 
-APP_LDFLAGS  = -L$(TOP) -lptam
-APP_LDFLAGS += $(TOP)/deps/cvd/libcvd.a
-APP_LDFLAGS += $(TOP)/deps/gvars/libGVars3.a -lreadline
+APP_LDFLAGS  = -L$(TOP)
+APP_LDFLAGS += -lptam
 APP_LDFLAGS += -lpthread
 
+APP_LDFLAGS2  = $(TOP)/deps/cvd/libcvd.a
+APP_LDFLAGS2 += $(TOP)/deps/gvars/libGVars3.a
+APP_LDFLAGS2 += -lreadline
+
 !cxx = |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) -c %f -o %o |> %B.o $(TOP)/<ptam>
-!cxxapp = | $(TOP)/libptam.a $(TOP)/libptam_gui.a |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) $(APP_FLAGS) %f -o %o $(APP_LDFLAGS) |> %d
-!ar = |> ar crs %o |> lib%d.a
+!cxxapp = | $(TOP)/<ptam_libs> $(TOP)/<deps>  |> ^o^ $(COMPILER) $(CXXFLAGS) $(INCLUDE_FLAGS) $(APP_FLAGS) %f -o %o $(APP_LDFLAGS) $(APP_LDFLAGS2) |> %d
